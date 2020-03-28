@@ -10,22 +10,21 @@ namespace BridgeNETServer
 
         public MapsManager()
         {
-            maps.Add(0, new Map()
-            {
-                spawnX = 780,
-                spawnY = 620,
-            });
+            maps.Add(0, new Map());
 
-            maps.Add(1, new Map()
-            {
-                spawnX = 700,
-                spawnY = 900,
-            });
+            maps.Add(1, new Map());
+
+            maps.Add(2, new Map());
         }
 
         public static bool GetMap(int id, out Map map)
         {
             return maps.TryGetValue(id, out map);
+        }
+
+        internal static bool GetMap(object mapId, out Map m)
+        {
+            throw new NotImplementedException();
         }
     }
 }

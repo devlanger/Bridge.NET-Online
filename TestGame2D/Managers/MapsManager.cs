@@ -23,6 +23,13 @@ namespace TestGame2D
                 sizeX = 1000,
                 sizeY = 1000
             });
+
+            maps.Add(2, new MapData()
+            {
+                resource = "https://marketplacecdn.yoyogames.com/images/assets/6148/screenshots/15322_original.jpg?1510917759",
+                sizeX = 2000,
+                sizeY = 2000
+            });
         }
 
         public static bool GetMap(int id, out MapData map)

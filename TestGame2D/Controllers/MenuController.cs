@@ -14,17 +14,6 @@ namespace TestGame2D.Controllers
         public void Init()
         {
             EnterGame();
-            return;
-            go = GameObject.Instantiate<GameObject>(-999, 200, 200, 200, 200, "img/player1.png");
-            go.imageElement.AddEventListener(Bridge.Html5.EventType.Click, (e) =>
-            {
-                Console.WriteLine("XXXX");
-
-                EnterGame();
-            });
-
-            App.OnUpdate += App_OnUpdate;
-            App.OnClick += App_OnClick;
         }
 
         private void App_OnClick(MouseEvent e, int arg1, int arg2)
@@ -42,6 +31,7 @@ namespace TestGame2D.Controllers
 
         public void EnterGame()
         {
+            //
             App.OnUpdate -= App_OnUpdate;
             App.OnClick -= App_OnClick;
 

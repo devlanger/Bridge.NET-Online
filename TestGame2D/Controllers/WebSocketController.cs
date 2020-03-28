@@ -100,6 +100,7 @@ namespace TestGame2D.Networking
                     }
                     break;
                 case 3:
+                    GameController.Instance.SetMap((int)obj.mapId);
                     if (GameObjectsManager.GetObject((int)obj.id, out Character pl))
                     {
                         GameController.Instance.SetPlayer(pl);
@@ -114,6 +115,13 @@ namespace TestGame2D.Networking
                     if (GameObjectsManager.GetObject((int)obj.id, out Character t))
                     {
                         t.SetStat(stat, (int)obj.val);
+                    }
+                    break;
+                case 6:
+                    DbUniqueItem[] items = JSON.Parse<DbUniqueItem[]>((string)obj.items);
+                    foreach (var item in items)
+                    {
+                        Script.Call("setInventorySlot", item.slot, item.baseId);
                     }
                     break;
             }

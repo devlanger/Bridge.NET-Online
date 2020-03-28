@@ -12,6 +12,11 @@ namespace BridgeNETServer
 
         public event Action<Stat, int> OnStatChanged = delegate { };
 
+        public override void Click(User user)
+        {
+            user.Player.TargetId = (int)ObjectId;
+        }
+
         public override void Init()
         {
             base.Init();

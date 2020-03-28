@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace TestGame2D
 {
-    public class Portal : GameObject
+    public class DbUniqueItem
     {
+        public int id;
+        public int ownerId;
+        public int baseId;
+        public int slot;
     }
 }

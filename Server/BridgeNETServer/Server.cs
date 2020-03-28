@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -14,11 +16,11 @@ namespace BridgeNETServer
     {
         public int ObjectRefId;
 
-        public GameObject Player
+        public Player Player
         {
             get
             {
-                GameObjectsManager.GetObject(ObjectRefId, out GameObject p);
+                GameObjectsManager.GetObject(ObjectRefId, out Player p);
                 return p;
             }
         }
@@ -63,7 +65,10 @@ namespace BridgeNETServer
                     Send(pck.ToString());
                     break;
                 case 1:
-                    Player.TargetId = (int)obj.id;
+                    if (GameObjectsManager.GetObject((int)obj.id, out GameObject go))
+                    {
+                        go.Click(this);
+                    }
                     break;
             }
         }
@@ -71,9 +76,20 @@ namespace BridgeNETServer
         protected override void OnOpen()
         {
             Console.WriteLine("Player Connected");
-            Player p = GameObject.Instantiate<Player>(660, 400);
+            MongoCRUD c = new MongoCRUD("bridge-mmo");
+
+            int characterId = 1;
+
+            DbCharacter data = c.GetRecordById<DbCharacter>("characters", characterId);
+
+
+            Player p = GameObject.Instantiate<Player>(data.x, data.y);
             ObjectRefId = p.ObjectId;
-            if (MapsManager.GetMap(0, out Map m))
+            p.mapId = data.mapId;
+            p.stats[Stat.LVL] = data.lvl;
+            p.stats[Stat.EXP] = data.exp;
+
+            if (MapsManager.GetMap(data.mapId, out Map m))
             {
                 m.AddPlayer(ObjectRefId);
             }
@@ -81,16 +97,28 @@ namespace BridgeNETServer
             p.OnObserve += P_OnObserve;
             p.OnUnobserve += P_OnUnobserve;
             p.OnStatChanged += P_OnStatChanged;
+            p.OnSlotChanged += P_OnSlotChanged;
 
             PacketsSender.SpawnGameObject(this, p);
 
             JObject pck2 = new JObject();
             pck2["msgId"] = 3;
             pck2["id"] = ObjectRefId;
+            pck2["mapId"] = data.mapId;
 
             Send(pck2.ToString());
 
             UsersManager.AddUser(ObjectRefId, this);
+
+            List<DbUniqueItem> inventory = c.GetCharacterItems<DbUniqueItem>(characterId);
+            p.SetItems(inventory);
+
+            PacketsSender.SendItems(this, inventory);
+        }
+
+        private void P_OnSlotChanged(int arg1, DbUniqueItem arg2)
+        {
+            PacketsSender.SendItems(this, new List<DbUniqueItem>() { arg2 });
         }
 
         private void P_OnStatChanged(Stat arg1, int arg2)
@@ -115,6 +143,9 @@ namespace BridgeNETServer
         {
             Console.WriteLine("Player Disconnected " + e.Reason);
             GameObjectsManager.GetObject<Player>(ObjectRefId, out Player p);
+
+            MongoCRUD c = new MongoCRUD("bridge-mmo");
+            c.UpdateCharacter(Player);
 
             p.OnObserve -= P_OnObserve;
             p.OnUnobserve -= P_OnUnobserve;
@@ -179,45 +210,14 @@ namespace BridgeNETServer
             public string password;
         }
 
-        class DbCharacter
-        {
-            public int id;
-            public string nickname;
-            public int lvl;
-            public int exp;
-        }
-
         private void LoadManagers()
         {
             MapsManager maps = new MapsManager();
+            ItemsManager items = new ItemsManager();
             SpawnsManager spawns = new SpawnsManager();
             UsersManager players = new UsersManager();
             GameController game = new GameController();
             Respawner respawner = new Respawner();
-
-            MongoCRUD m = new MongoCRUD("bridge-mmo");
-            /*m.InsertRecord<DbUser>("users", new DbUser()
-            {
-                id = 2,
-                username = "admin",
-                password = "admin"
-            });
-
-            m.InsertRecord<DbCharacter>("characters", new DbCharacter()
-            {
-                id = 1,
-                lvl = 5,
-                exp = 100,
-                nickname = "Test"
-            });
-
-            m.InsertRecord<DbCharacter>("characters", new DbCharacter()
-            {
-                id = 2,
-                lvl = 5,
-                exp = 100,
-                nickname = "Test"
-            });*/
         }
     }
 }

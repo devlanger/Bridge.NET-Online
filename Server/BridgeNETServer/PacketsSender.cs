@@ -1,4 +1,5 @@
 ﻿using MessagePack;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -47,6 +48,15 @@ namespace BridgeNETServer
             obj["id"] = (int)targetId;
             obj["stat"] = (int)statId;
             obj["val"] = val;
+
+            user.SendData(obj.ToString());
+        }
+
+        public static void SendItems(User user, List<DbUniqueItem> inventory)
+        {
+            JObject obj = new JObject();
+            obj["msgId"] = 6;
+            obj["items"] = JsonConvert.SerializeObject(inventory);
 
             user.SendData(obj.ToString());
         }

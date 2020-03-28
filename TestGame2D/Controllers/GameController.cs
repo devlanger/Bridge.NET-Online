@@ -29,8 +29,6 @@ namespace TestGame2D
 
             SetMap(0);
 
-            GameObject.Instantiate<Portal>(-9996, 980, 620, 64, 64, "https://freesvg.org/img/teleport.png");
-            
             App.OnUpdate += Update;
             App.OnClick += App_OnClick;
         }

@@ -20,6 +20,15 @@ namespace TestGame2D
             WebSocketController.Instance.Send(JSON.Stringify(x));
         }
 
+        internal static void TeleportRequest(int mapTeleportId)
+        {
+            dynamic x = new object();
+            x.msgId = 2;
+            x.map = mapTeleportId;
+
+            WebSocketController.Instance.Send(JSON.Stringify(x));
+        }
+
         public static void ClickTarget(int targetId)
         {
             dynamic x = new object();

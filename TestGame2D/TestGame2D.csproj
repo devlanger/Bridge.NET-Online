@@ -46,6 +46,7 @@
     <Compile Include="Models\Camera.cs" />
     <Compile Include="Models\Character.cs" />
     <Compile Include="Controllers\GameController.cs" />
+    <Compile Include="Models\DbItem.cs" />
     <Compile Include="Models\GameObject.cs" />
     <Compile Include="Managers\GameObjectsManager.cs" />
     <Compile Include="Models\Map.cs" />

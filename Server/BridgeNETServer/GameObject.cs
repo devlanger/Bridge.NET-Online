@@ -40,6 +40,11 @@ namespace BridgeNETServer
 
         }
 
+        public virtual void Click(User user)
+        {
+
+        }
+
         public virtual void DealDamage(Character attacker, int v)
         {
             Console.WriteLine("Attack: " + ObjectId);
@@ -51,6 +56,19 @@ namespace BridgeNETServer
                 Destroy(this);
                 attacker.AddStat(Stat.EXP, 40);
                 attacker.TargetId = -1;
+
+                if (attacker is Player)
+                {
+                    int rand = new Random().Next(0, 4);
+                    //if (rand == 1)
+                    //{
+                        ((Player)attacker).AddNewItem(new DbUniqueItem()
+                        {
+                            ownerId = attacker.ObjectId,
+                            baseId = 1
+                        });
+                    //}
+                }
 
                 Respawner.Instance.AddRespawn(new RespawnEntity()
                 {
