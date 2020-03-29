@@ -37,5 +37,14 @@ namespace TestGame2D
 
             WebSocketController.Instance.Send(JSON.Stringify(x));
         }
+
+        public static void SendHash(string hash)
+        { 
+            dynamic x = new object();
+            x.msgId = 2;
+            x.hash = hash;
+
+            WebSocketController.Instance.Send(JSON.Stringify(x));
+        }
     }
 }

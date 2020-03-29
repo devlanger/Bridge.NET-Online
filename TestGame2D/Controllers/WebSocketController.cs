@@ -50,6 +50,8 @@ namespace TestGame2D.Networking
         private void OnSocketOpen(Event e)
         {
             //Console.WriteLine("CONNECTED: " + Socket.Url);
+            var hash = Script.Call<string>("getSessionHash");
+            PacketSender.SendHash(hash);
         }   
 
         private void OnSocketClose(CloseEvent e)
@@ -141,7 +143,6 @@ namespace TestGame2D.Networking
 
             try
             {
-                //Console.WriteLine("Connecting...");
                 var config = Script.Call<dynamic>("getConfig");
                 Socket = new WebSocket(config.gameIp);
 

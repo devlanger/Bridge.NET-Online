@@ -11,9 +11,11 @@ namespace BridgeNETServer
     {
         private IMongoDatabase database;
 
+        public static string connString = "";
+
         public MongoCRUD(string db)
         {
-            var client = new MongoClient();
+            var client = new MongoClient(connString);
             database = client.GetDatabase("bridge-mmo");
         }
 
@@ -37,12 +39,20 @@ namespace BridgeNETServer
             return col.Find(filter).First();
         }
 
+        public T GetRecordByAccountId<T>(string table, int id)
+        {
+            var col = database.GetCollection<T>(table);
+            var filter = Builders<T>.Filter.Eq("accountId", id);
+
+            return col.Find(filter).First();
+        }
+
         public void UpdateCharacter(Player player)
         {
             var collection = database.GetCollection<DbCharacter>("characters");
 
             //Hard coded for testing
-            var filter = Builders<DbCharacter>.Filter.Eq("id", 1);
+            var filter = Builders<DbCharacter>.Filter.Eq("id", player.DatabaseId);
 
             var update = Builders<DbCharacter>.Update.Set("mapId", player.mapId);
             update = update.Set("x", player.posX);
@@ -60,16 +70,6 @@ namespace BridgeNETServer
 
             return col.Find(filter).ToList();
         }
-
-        /*public void UpdateRecordById<T>(string table)
-        {
-            var col = database.GetCollection<T>(table);
-            var filter = Builders<T>.Filter.Eq("id", id);
-            var update = Builders<BsonDocument>.Update.Set("x", 483);
-            var update2 = Builders<BsonDocument>.Update.Set("y", 483);
-            col.UpdateOne(filter, update);
-            col.UpdateOne(filter, update2);
-        }*/
     }
 
     public class DatabaseManager

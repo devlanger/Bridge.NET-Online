@@ -8,6 +8,7 @@ namespace BridgeNETServer
     public class DbCharacter
     {
         public int id;
+        public int accountId;
         public string nickname;
         public int lvl;
         public int exp;

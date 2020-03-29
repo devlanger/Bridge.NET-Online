@@ -7,6 +7,8 @@ namespace BridgeNETServer
 {
     public class Player : Character
     {
+        public int DatabaseId;
+
         public Dictionary<int, DbUniqueItem> items = new Dictionary<int, DbUniqueItem>();
         public event Action<int, DbUniqueItem> OnSlotChanged = delegate { };
 
@@ -56,14 +58,12 @@ namespace BridgeNETServer
                 foreach (var item in removed)
                 {
                     OnUnobserve(item);
-                    Console.WriteLine("Removed: " + item);
                 }
 
 
                 foreach (var item in added)
                 {
                     OnObserve(item);
-                    Console.WriteLine("Added: " + item);
                 }
 
                 HashSet<int> all = m.objects.ToHashSet();

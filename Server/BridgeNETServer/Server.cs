@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -14,7 +15,7 @@ namespace BridgeNETServer
 {
     public class User : WebSocketBehavior
     {
-        public int ObjectRefId;
+        public int ObjectRefId = -1;
 
         public Player Player
         {
@@ -70,20 +71,39 @@ namespace BridgeNETServer
                         go.Click(this);
                     }
                     break;
+                case 2:
+                    if (ObjectRefId == -1)
+                    {
+                        EnterGame((string)obj.hash);
+                    }
+                    break;
             }
         }
 
         protected override void OnOpen()
         {
             Console.WriteLine("Player Connected");
+        }
+
+
+        public void EnterGame(string hash)
+        {
+            Console.WriteLine("Enter game: " + hash);
             MongoCRUD c = new MongoCRUD("bridge-mmo");
 
-            int characterId = 1;
+            var client = new MongoClient(MongoCRUD.connString);
+            var database = client.GetDatabase("bridge-mmo");
+            var col = database.GetCollection<dynamic>("sessions");
+            var filter = Builders<dynamic>.Filter.Eq("session_hash", hash);
 
-            DbCharacter data = c.GetRecordById<DbCharacter>("characters", characterId);
+            var sessionData = col.Find(filter).First();
+            var accountId = sessionData._id;
 
+            DbCharacter data = c.GetRecordById<DbCharacter>("characters", accountId);
+            var DatabaseId = data.id;
 
             Player p = GameObject.Instantiate<Player>(data.x, data.y);
+            p.DatabaseId = DatabaseId;
             ObjectRefId = p.ObjectId;
             p.mapId = data.mapId;
             p.stats[Stat.LVL] = data.lvl;
@@ -110,7 +130,7 @@ namespace BridgeNETServer
 
             UsersManager.AddUser(ObjectRefId, this);
 
-            List<DbUniqueItem> inventory = c.GetCharacterItems<DbUniqueItem>(characterId);
+            List<DbUniqueItem> inventory = c.GetCharacterItems<DbUniqueItem>(DatabaseId);
             p.SetItems(inventory);
 
             PacketsSender.SendItems(this, inventory);
@@ -212,6 +232,10 @@ namespace BridgeNETServer
 
         private void LoadManagers()
         {
+            var configJson = File.ReadAllText("data/config.json");
+            dynamic config = JsonConvert.DeserializeObject(configJson);
+            MongoCRUD.connString = config.db_string;
+
             MapsManager maps = new MapsManager();
             ItemsManager items = new ItemsManager();
             SpawnsManager spawns = new SpawnsManager();
