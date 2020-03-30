@@ -125,6 +125,8 @@ namespace BridgeNETServer
             pck2["msgId"] = 3;
             pck2["id"] = ObjectRefId;
             pck2["mapId"] = data.mapId;
+            pck2["lvl"] = data.lvl;
+            pck2["exp"] = data.exp;
 
             Send(pck2.ToString());
 

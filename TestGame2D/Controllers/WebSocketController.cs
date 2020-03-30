@@ -106,6 +106,8 @@ namespace TestGame2D.Networking
                     if (GameObjectsManager.GetObject((int)obj.id, out Character pl))
                     {
                         GameController.Instance.SetPlayer(pl);
+                        GameController.Instance.player.SetStat(Stat.LVL, (int)obj.lvl);
+                        GameController.Instance.player.SetStat(Stat.EXP, (int)obj.exp);
                     }
                     break;
                 case 4:

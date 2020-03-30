@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
 
@@ -21,6 +22,11 @@ namespace BridgeNETServer
 
         public HashSet<int> Observed = new HashSet<int>();
 
+        public event Action<int> OnObserve = delegate { };
+        public event Action<int> OnUnobserve = delegate { };
+
+        public Dictionary<Stat, int> stats = new Dictionary<Stat, int>();
+
         public static T Instantiate<T>(int x, int y, SpawnsManager.SpawnData data = null) where T : GameObject, new()
         {
             T g = new T();
@@ -35,6 +41,32 @@ namespace BridgeNETServer
             return g;
         }
 
+        public void UpdateObservedObjects()
+        {
+            if (MapsManager.GetMap(mapId, out Map m))
+            {
+                HashSet<int> removed = Observed.Except(m.objects).ToHashSet();
+                HashSet<int> added = m.objects.Except(Observed).ToHashSet();
+                removed.Remove(ObjectId);
+                added.Remove(ObjectId);
+
+                foreach (var item in removed)
+                {
+                    OnUnobserve(item);
+                }
+
+                foreach (var item in added)
+                {
+                    OnObserve(item);
+                }
+
+                HashSet<int> all = m.objects.ToHashSet();
+                all.Remove(ObjectId);
+
+                Observed = all.ToHashSet();
+            }
+        }
+
         private void SetData(SpawnsManager.SpawnData data)
         {
 
@@ -47,36 +79,6 @@ namespace BridgeNETServer
 
         public virtual void DealDamage(Character attacker, int v)
         {
-            Console.WriteLine("Attack: " + ObjectId);
-
-            Health -= v;
-
-            if (Health <= 0)
-            {
-                Destroy(this);
-                attacker.AddStat(Stat.EXP, 40);
-                attacker.TargetId = -1;
-
-                if (attacker is Player)
-                {
-                    int rand = new Random().Next(0, 4);
-                    //if (rand == 1)
-                    //{
-                        ((Player)attacker).AddNewItem(new DbUniqueItem()
-                        {
-                            ownerId = attacker.ObjectId,
-                            baseId = 1
-                        });
-                    //}
-                }
-
-                Respawner.Instance.AddRespawn(new RespawnEntity()
-                {
-                    id = ObjectId,
-                    go = this,
-                    respawnTime = Time.time + respawnTime
-                });
-            }
         }
 
         private void SetPosition(int x, int y)

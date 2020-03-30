@@ -30,6 +30,20 @@ namespace TestGame2D
                 sizeX = 2000,
                 sizeY = 2000
             });
+
+            maps.Add(3, new MapData()
+            {
+                resource = "img/map-dg1.png",
+                sizeX = 1000,
+                sizeY = 1000
+            });
+
+            maps.Add(4, new MapData()
+            {
+                resource = "img/map-dg1.png",
+                sizeX = 1000,
+                sizeY = 1000
+            });
         }
 
         public static bool GetMap(int id, out MapData map)

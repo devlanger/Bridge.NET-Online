@@ -9,6 +9,12 @@ namespace BridgeNETServer
         public int id;
         public GameObject go;
         public float respawnTime;
+
+        public void Respawn()
+        {
+            go.stats[Stat.HEALTH] = go.stats[Stat.MAX_HEALTH];
+            go.TargetId = -1;
+        }
     }
 
     public class Respawner
@@ -41,6 +47,7 @@ namespace BridgeNETServer
                         m.AddPlayer(item.Value.id);
                     }
 
+                    item.Value.Respawn();
                     itemsToRemove.Add(item.Value.id);
                 }
             }

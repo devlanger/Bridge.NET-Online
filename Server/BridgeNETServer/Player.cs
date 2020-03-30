@@ -12,9 +12,6 @@ namespace BridgeNETServer
         public Dictionary<int, DbUniqueItem> items = new Dictionary<int, DbUniqueItem>();
         public event Action<int, DbUniqueItem> OnSlotChanged = delegate { };
 
-        public event Action<int> OnObserve = delegate { };
-        public event Action<int> OnUnobserve = delegate { };
-
         public override void Init()
         {
             base.Init();
@@ -46,31 +43,12 @@ namespace BridgeNETServer
             PacketsSender.TeleportToMap(user, newMapId, posX, posY);
         }
 
-        public void UpdateObservedObjects()
+        protected override void Die(Character attacker)
         {
-            if (MapsManager.GetMap(mapId, out Map m))
-            {
-                HashSet<int> removed = Observed.Except(m.objects).ToHashSet();
-                HashSet<int> added = m.objects.Except(Observed).ToHashSet();
-                removed.Remove(ObjectId);
-                added.Remove(ObjectId);
+            TargetId = -1;
 
-                foreach (var item in removed)
-                {
-                    OnUnobserve(item);
-                }
-
-
-                foreach (var item in added)
-                {
-                    OnObserve(item);
-                }
-
-                HashSet<int> all = m.objects.ToHashSet();
-                all.Remove(ObjectId);
-
-                Observed = all.ToHashSet();
-            }
+            TeleportToMap(0, 250, 250);
+            SetStat(Stat.HEALTH, stats[Stat.MAX_HEALTH], true);
         }
 
         public void SetItems(List<DbUniqueItem> inventory)

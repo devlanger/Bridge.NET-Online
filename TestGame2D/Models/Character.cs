@@ -42,11 +42,13 @@ namespace TestGame2D
             DestinationX = PosX;
             DestinationY = PosY;
 
-
             foreach (var item in Enum.GetValues(typeof(Stat)))
             {
                 stats.Add((Stat)item, 0);
             }
+
+            stats[Stat.MAX_HEALTH] = 100;
+            stats[Stat.HEALTH] = stats[Stat.MAX_HEALTH];
         }
 
         public override void Update()
@@ -96,7 +98,15 @@ namespace TestGame2D
 
         public override void Draw(CanvasRenderingContext2D ctx, int offsetX, int offsetY)
         {
-            if(!isLocallyObserved)
+            int x = (int)((PosX - this.offsetX) - offsetX);
+            int y = (int)((PosY - this.offsetY) - offsetY);
+
+            ctx.FillStyle = HTMLColor.Black;
+            ctx.FillRect(x - width, y - height, 100, 5);
+            ctx.FillStyle = HTMLColor.Red;
+            ctx.FillRect(x - width, y - height, stats[Stat.HEALTH], 5);
+
+            if (!isLocallyObserved)
             {
                 base.Draw(ctx, offsetX, offsetY);
             }
