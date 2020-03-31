@@ -13,7 +13,6 @@ namespace BridgeNETServer
         public int posY;
         public int TargetId = -1;
 
-        public int Health = 100;
         public int respawnTime = 30;
         public bool respawnable = false;
 

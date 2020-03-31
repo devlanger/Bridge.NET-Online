@@ -99,7 +99,23 @@ namespace BridgeNETServer
             var sessionData = col.Find(filter).First();
             var accountId = sessionData._id;
 
-            DbCharacter data = c.GetRecordById<DbCharacter>("characters", accountId);
+            DbCharacter data = c.GetRecordByAccountId<DbCharacter>("characters", accountId);
+            if(data == null)
+            {
+                var newId = c.Increment<dynamic>("counters", "characters");
+                int id = newId.seq + 1;
+
+                data = new DbCharacter()
+                {
+                    accountId = accountId,
+                    id = id,
+                    lvl = 1,
+                    nickname = "newacc"
+                };
+
+                c.InsertRecord<DbCharacter>("characters", data);
+            }
+
             var DatabaseId = data.id;
 
             Player p = GameObject.Instantiate<Player>(data.x, data.y);

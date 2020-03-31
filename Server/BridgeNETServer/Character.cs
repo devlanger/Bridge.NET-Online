@@ -21,24 +21,24 @@ namespace BridgeNETServer
 
             foreach (var item in Enum.GetValues(typeof(Stat)))
             {
-                stats.Add((Stat)item, 0);
+                if (!stats.ContainsKey((Stat)item))
+                {
+                    stats.Add((Stat)item, 0);
+                }
             }
-
-            stats[Stat.MAX_HEALTH] = 100;
-            stats[Stat.HEALTH] = stats[Stat.MAX_HEALTH];
         }
 
         public override void Update()
         {
             base.Update();
 
-            if (stats[Stat.HEALTH] > 0 && TargetId != -1)
+            if (TargetId != -1)
             {
-                if (Time.time > lastAttackTime + 1)
+                if (stats[Stat.HEALTH] > 0 && Time.time > lastAttackTime + 1)
                 {
                     if (GameObjectsManager.GetObject(TargetId, out Character target))
                     {
-                        target.DealDamage(this, 25);
+                        target.DealDamage(this, stats[Stat.DAMAGE]);
                         lastAttackTime = Time.time;
                     }
                 }

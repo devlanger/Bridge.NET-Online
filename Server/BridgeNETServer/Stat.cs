@@ -11,5 +11,6 @@ namespace BridgeNETServer
         LVL = 3,
         EXP = 4,
         MAX_HEALTH = 5,
+        DAMAGE = 6,
     }
 }

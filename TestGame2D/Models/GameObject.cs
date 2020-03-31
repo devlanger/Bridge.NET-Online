@@ -15,8 +15,8 @@ namespace TestGame2D
         public int PosX;
         public int PosY;
 
-        public int width = 32;
-        public int height = 32;
+        public int width = 64;
+        public int height = 64;
 
         public HTMLImageElement imageElement;
         public float offsetX;

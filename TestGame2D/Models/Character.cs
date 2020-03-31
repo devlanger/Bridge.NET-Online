@@ -74,12 +74,12 @@ namespace TestGame2D
                 if(rotated && DestinationX < PosX)
                 {
                     rotated = false;
-                    imageElement.Width = 1;
+                    //imageElement.Width = 1;
                 }
                 else if(!rotated && DestinationX > PosX)
                 {
                     rotated = true;
-                    imageElement.Width = Math.Abs(imageElement.Width) * -1;
+                    //imageElement.Width = Math.Abs(imageElement.Width) * -1;
                 }
             }
 
@@ -101,10 +101,12 @@ namespace TestGame2D
             int x = (int)((PosX - this.offsetX) - offsetX);
             int y = (int)((PosY - this.offsetY) - offsetY);
 
+            int maxWidth = 50;
+
             ctx.FillStyle = HTMLColor.Black;
-            ctx.FillRect(x - width, y - height, 100, 5);
+            ctx.FillRect(x, y - (height / 2), maxWidth, 5);
             ctx.FillStyle = HTMLColor.Red;
-            ctx.FillRect(x - width, y - height, stats[Stat.HEALTH], 5);
+            ctx.FillRect(x, y - (height / 2), (int)(((float)stats[Stat.HEALTH] / (float)stats[Stat.MAX_HEALTH]) * 50f), 5);
 
             if (!isLocallyObserved)
             {

@@ -31,12 +31,22 @@ namespace BridgeNETServer
             return col.Find(new BsonDocument()).ToList();
         }
 
-        public T GetRecordById<T>(string table, int id)
+        public T GetRecordById<T>(string table, int id) where T : class
         {
             var col = database.GetCollection<T>(table);
-            var filter = Builders<T>.Filter.Eq("id", id);
+            var filter = Builders<T>.Filter.Eq("_id", id);
 
-            return col.Find(filter).First();
+            var x = col.Find(filter);
+            return x.FirstOrDefault();
+        }
+
+        public T Increment<T>(string table, string id)
+        {
+            var col = database.GetCollection<T>(table);
+            var filter = Builders<T>.Filter.Eq("_id", id);
+
+            var update = Builders<T>.Update.Inc("seq", 1);
+            return col.FindOneAndUpdate(filter, update);
         }
 
         public T GetRecordByAccountId<T>(string table, int id)
@@ -44,14 +54,13 @@ namespace BridgeNETServer
             var col = database.GetCollection<T>(table);
             var filter = Builders<T>.Filter.Eq("accountId", id);
 
-            return col.Find(filter).First();
+            return col.Find(filter).FirstOrDefault();
         }
 
         public void UpdateCharacter(Player player)
         {
             var collection = database.GetCollection<DbCharacter>("characters");
 
-            //Hard coded for testing
             var filter = Builders<DbCharacter>.Filter.Eq("id", player.DatabaseId);
 
             var update = Builders<DbCharacter>.Update.Set("mapId", player.mapId);

@@ -17,6 +17,9 @@ namespace BridgeNETServer
             base.Init();
 
             stats[Stat.LVL] = 1;
+            stats[Stat.DAMAGE] = 25;
+            stats[Stat.MAX_HEALTH] = 100;
+            stats[Stat.HEALTH] = stats[Stat.MAX_HEALTH];
         }
 
         public override void Update()
@@ -47,7 +50,7 @@ namespace BridgeNETServer
         {
             TargetId = -1;
 
-            TeleportToMap(0, 250, 250);
+            TeleportToMap(0, 600, 400);
             SetStat(Stat.HEALTH, stats[Stat.MAX_HEALTH], true);
         }
 

@@ -8,6 +8,15 @@ namespace BridgeNETServer
 {
     public class SpawnsManager
     {
+        public class MobModel
+        {
+            public int id;
+            public int health;
+            public int lvl;
+            public int damage;
+            public int exp;
+        }
+
         public class SpawnData
         {
             public int id;
@@ -29,8 +38,16 @@ namespace BridgeNETServer
             public int targetMap;
         }
 
+        public Dictionary<int, MobModel> mobModels = new Dictionary<int, MobModel>();
+
         public SpawnsManager()
         {
+            string modelsJson = File.ReadAllText("data/mobModels.json");
+            foreach (var item in JsonConvert.DeserializeObject<MobModel[]>(modelsJson))
+            {
+                mobModels.Add(item.id, item);
+            }
+
             string portalsJson = File.ReadAllText("data/portals.json");
             foreach (var item in JsonConvert.DeserializeObject<PortalData[]>(portalsJson))
             {
@@ -53,6 +70,11 @@ namespace BridgeNETServer
                 go.mapId = item.map;
                 go.respawnable = true;
                 go.respawnTime = item.time;
+                MobModel model = mobModels[go.BaseId];
+                go.stats[Stat.LVL] = model.lvl;
+                go.stats[Stat.MAX_HEALTH] = model.health;
+                go.stats[Stat.HEALTH] = model.health;
+                go.stats[Stat.DAMAGE] = model.damage;
 
                 MapsManager.GetMap(item.map, out Map m);
                 m.AddPlayer(go.ObjectId);

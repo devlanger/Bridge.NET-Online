@@ -81,7 +81,7 @@ namespace TestGame2D.Networking
                     try
                     {
                         var mobModel = Script.Call<dynamic>("getMobModel", baseId);
-                        GameObject.Instantiate<Character>(objectId, x, y, 32, 32, mobModel.resource);
+                        GameObject.Instantiate<Character>(objectId, x, y, 64, 64, mobModel.resource);
                     }
                     catch(Exception ex)
                     {
